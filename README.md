@@ -1,6 +1,6 @@
 # Bandshape Equalisation for uGMRT Pulsar Archives
 
-A command-line tool for performing bandshape equalisation on pulsar FITS archives observed with the **uGMRT** (upgraded Giant Metrewave Radio Telescope). It flattens the frequency response of an observation by computing per-channel weights from the on-pulse signal and applying them across the archive.
+A command-line tool for performing bandshape equalisation on pulsar FITS archives observed with the **uGMRT** (upgraded Giant Metrewave Radio Telescope). It flattens the frequency response of an observation by computing per-channel weights from the off-pulse signal and applying them across the archive.
 
 **Author:** Avinash Kumar Paladi  
 **Email:** avinashkumarpaladi@gmail.com
@@ -10,7 +10,7 @@ A command-line tool for performing bandshape equalisation on pulsar FITS archive
 ## What it does
 
 1. Loads a PSRCHIVE-format FITS archive and dedisperses it.
-2. Sums the data over a user-defined on-pulse phase-bin window to get the per-channel bandshape.
+2. Sums the data over a user-defined off-pulse phase-bin window to get the per-channel bandshape.
 3. Computes equalisation weights (`max(bandshape) / bandshape`) and masks edge channels and channels with very low signal (< 1% of peak).
 4. Applies those weights channel-by-channel and saves a new equalised archive.
 5. Produces two diagnostic plots:
@@ -63,8 +63,8 @@ python3 bandshape_equalisation.py <FITS-file> [--sbin SBIN] [--ebin EBIN] [--out
 | Argument | Type | Description |
 |---|---|---|
 | `FITS-file` | positional (required) | Input PSRCHIVE FITS archive |
-| `--sbin SBIN` | optional int | Start phase bin of the on-pulse window (default: `0`) |
-| `--ebin EBIN` | optional int | End phase bin of the on-pulse window (default: `nbin`) |
+| `--sbin SBIN` | optional int | Start phase bin of the off-pulse window (default: `0`) |
+| `--ebin EBIN` | optional int | End phase bin of the off-pulse window (default: `nbin`) |
 | `--output OUTPUT` | optional str | Output filename (default: `<input>.beq.fits`) |
 
 ### Get help
@@ -83,7 +83,7 @@ python3 bandshape_equalisation.py J0437+4715_Band3.fits
 # Output: J0437+4715_Band3.beq.fits
 ```
 
-**Specify on-pulse phase bins:**
+**Specify off-pulse phase bins:**
 ```bash
 python3 bandshape_equalisation.py J0437+4715_Band3.fits --sbin 100 --ebin 200
 ```
@@ -128,7 +128,7 @@ A warning is printed if the telescope is not GMRT/uGMRT or if the frequency fall
 ## How the weights are computed
 
 ```
-bandshape[ichan] = sum of data over (sub-integrations, polarisations, on-pulse bins)
+bandshape[ichan] = sum of data over (sub-integrations, polarisations, off-pulse bins)
 
 weight[ichan] = max(bandshape) / bandshape[ichan]
 ```
