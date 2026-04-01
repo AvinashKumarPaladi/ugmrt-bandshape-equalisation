@@ -101,12 +101,12 @@ python3 bandshape_equalisation.py J0437+4715_Band3.fits \
 ## Example Output
 
 ### Diagnostic Plot
-![Diagnostic plot showing pulse profile, bandshape, and weights for J1939+2134](J1939_2134_60083_031278_500_rfiClean_beq_diagnostic.png)
+![Diagnostic plot showing pulse profile, bandshape, and weights for J1939+2134](J1939+2134_60083_031278_500_rfiClean_beq_diagnostic.png)
 
 *Pulse profile (with selected bins highlighted), per-channel bandshape, and computed equalisation weights for PSR J1939+2134 observed at Band 3 (399 MHz, 200 MHz bandwidth).*
 
 ### Before / After Comparison
-![Frequency-phase waterfall before and after bandshape equalisation for J1939+2134](J1939_2134_60083_031278_500_rfiClean_beq_comparison.png)
+![Frequency-phase waterfall before and after bandshape equalisation for J1939+2134](J1939+2134_60083_031278_500_rfiClean_beq_comparison.png)
 
 *Left: original archive showing uneven frequency response. Right: bandequalised archive with flattened bandshape. The pulse from PSR J1939+2134 is clearly visible across all channels after equalisation.*
 
