@@ -39,7 +39,7 @@ cd bandshape-equalisation
 
 or 
 ```bash
-https://github.com/AvinashKumarPaladi/ugmrt-bandshape-equalisation/blob/main/bandshape_equalisation.py
+wget https://github.com/AvinashKumarPaladi/ugmrt-bandshape-equalisation/blob/main/bandshape_equalisation.py
 ```
 No additional installation step is needed — the script runs directly.
 
