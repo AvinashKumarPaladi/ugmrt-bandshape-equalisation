@@ -30,13 +30,6 @@ A command-line tool for performing bandshape equalisation on pulsar FITS archive
 
 ### Installing PSRCHIVE with Python bindings
 
-```bash
-# Configure PSRCHIVE with Python support
-./configure --enable-shared PYTHON=$(which python3)
-make
-make install
-```
-
 Refer to the [PSRCHIVE installation guide](http://psrchive.sourceforge.net/manuals/install/) for full instructions.
 
 ---
@@ -44,7 +37,7 @@ Refer to the [PSRCHIVE installation guide](http://psrchive.sourceforge.net/manua
 ## Installation
 
 ```bash
-git clone https://github.com/<your-username>/bandshape-equalisation.git
+git clone https://github.com/AvinashKumarPaladi/bandshape-equalisation.git
 cd bandshape-equalisation
 ```
 
