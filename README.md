@@ -28,10 +28,6 @@ A command-line tool for performing bandshape equalisation on pulsar FITS archive
 | NumPy | `pip install numpy` |
 | Matplotlib | `pip install matplotlib` |
 
-### Installing PSRCHIVE with Python bindings
-
-Refer to the [PSRCHIVE installation guide](http://psrchive.sourceforge.net/manuals/install/) for full instructions.
-
 ---
 
 ## Installation
