@@ -2,8 +2,8 @@
 
 A command-line tool for performing bandshape equalisation on pulsar FITS archives observed with the **uGMRT** (upgraded Giant Metrewave Radio Telescope). It flattens the frequency response of an observation by computing per-channel weights from the off-pulse signal and applying them across the archive.
 
-**Author:** Avinash Kumar Paladi  
-**Email:** avinashkumarpaladi@gmail.com
+**Author:** Churchil Dwivedi, Avinash Kumar Paladi  
+**Email:** churchil.gw4@gmail.com, avinashkumarpaladi@gmail.com
 
 ---
 
@@ -162,4 +162,5 @@ MIT License. See `LICENSE` for details.
 
 ## Contact
 
+Churchil Dwivedi — churchil.gw4@gmail.com
 Avinash Kumar Paladi — avinashkumarpaladi@gmail.com
