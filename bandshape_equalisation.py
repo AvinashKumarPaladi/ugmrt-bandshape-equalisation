@@ -5,12 +5,14 @@ Bandshape Equalisation for pulsar FITS archives.
 Author : Avinash Kumar Paladi <avinashkumarpaladi@gmail.com>
 
 Usage:
-    python3 bandshape_equalisation.py <FITS-file> [--sbin SBIN] [--ebin EBIN] [--output OUTPUT]
+    python3 bandshape_equalisation.py <FITS-files>... [--sbin SBIN] [--ebin EBIN] [--sphase SPHASE] [--ephase EPHASE] [--output OUTPUT]
 
 Arguments:
-    fits_file        : Input PSRCHIVE FITS archive (required)
+    fits_files       : Input PSRCHIVE FITS archive(s) (required)
     --sbin SBIN      : Start phase bin of on-pulse window (optional, default: 0)
     --ebin EBIN      : End phase bin of on-pulse window (optional, default: nbin)
+    --sphase SPHASE  : Start phase of on-pulse window (0.0 to 1.0, overrides --sbin)
+    --ephase EPHASE  : End phase of on-pulse window (0.0 to 1.0, overrides --ebin)
     --output OUTPUT  : Output filename (optional, default: <input>.beq.fits)
 
 Examples:
@@ -92,7 +94,7 @@ def get_gmrt_band(arch):
 # Core functions
 # ---------------------------------------------------------------------------
 
-def beq(filename, sbin=None, ebin=None, outfile=None):
+def beq(filename, sbin=None, ebin=None, sphase=None, ephase=None, outfile=None):
     """
     Perform bandshape equalisation on a PSRCHIVE FITS file.
 
@@ -104,6 +106,10 @@ def beq(filename, sbin=None, ebin=None, outfile=None):
         First phase bin of the on-pulse window.
     ebin : int, optional
         Last phase bin (exclusive) of the on-pulse window.
+    sphase : float, optional
+        First phase of the on-pulse window (0.0 to 1.0). Overrides sbin.
+    ephase : float, optional
+        Last phase of the on-pulse window (0.0 to 1.0). Overrides ebin.
     outfile : str, optional
         Output filename. Defaults to <filename>.beq.fits.
 
@@ -117,11 +123,21 @@ def beq(filename, sbin=None, ebin=None, outfile=None):
 
     arch = psrchive.Archive_load(filename)
     arch.dedisperse()
+    nbin = arch.get_nbin()
 
-    if sbin is None:
+    if sphase is not None:
+        sbin = int(sphase * nbin)
+    elif sbin is None:
         sbin = 0
-    if ebin is None:
-        ebin = arch.get_nbin()
+
+    if ephase is not None:
+        ebin = int(ephase * nbin)
+    elif ebin is None:
+        ebin = nbin
+
+    # Ensure bounds
+    sbin = max(0, min(sbin, nbin))
+    ebin = max(0, min(ebin, nbin))
 
     data = arch.get_data()          # shape: (nsub, npol, nchan, nbin)
     arch.dededisperse()
@@ -267,16 +283,17 @@ def parse_args():
         epilog=(
             "Examples:\n"
             "  python3 bandshape_equalisation.py obs.fits\n"
-            "  python3 bandshape_equalisation.py obs.fits --sbin 100 --ebin 200\n"
+            "  python3 bandshape_equalisation.py *.fits --sbin 100 --ebin 200\n"
             "  python3 bandshape_equalisation.py obs.fits --sbin 100 --ebin 200 "
             "--output J0437.Band3.beq.fits"
         ),
     )
 
     parser.add_argument(
-        "fits_file",
-        metavar="FITS-file",
-        help="Input PSRCHIVE FITS archive.",
+        "fits_files",
+        nargs="+",
+        metavar="FITS-files",
+        help="Input PSRCHIVE FITS archive(s).",
     )
     parser.add_argument(
         "--sbin",
@@ -293,10 +310,24 @@ def parse_args():
         help="End phase bin of the on-pulse window (default: nbin).",
     )
     parser.add_argument(
+        "--sphase",
+        type=float,
+        default=None,
+        metavar="SPHASE",
+        help="Start phase of the on-pulse window (0.0 to 1.0). Overrides --sbin.",
+    )
+    parser.add_argument(
+        "--ephase",
+        type=float,
+        default=None,
+        metavar="EPHASE",
+        help="End phase of the on-pulse window (0.0 to 1.0). Overrides --ebin.",
+    )
+    parser.add_argument(
         "--output",
         default=None,
         metavar="OUTPUT",
-        help="Output FITS filename (default: <input>.beq.fits).",
+        help="Output FITS filename (default: <input>.beq.fits). Ignored if multiple files are provided.",
     )
 
     return parser.parse_args()
@@ -306,19 +337,30 @@ def main():
     args = parse_args()
 
     print(f"Bandshape Equalisation  |  {__author__} <{__email__}>")
-    print(f"  Input  : {args.fits_file}")
-    print(f"  sbin   : {args.sbin}")
-    print(f"  ebin   : {args.ebin}")
-    print(f"  Output : {args.output or '<auto>'}")
+    print(f"  Inputs : {len(args.fits_files)} file(s)")
+    if args.sphase is not None:
+        print(f"  sphase : {args.sphase}")
+    else:
+        print(f"  sbin   : {args.sbin}")
+    if args.ephase is not None:
+        print(f"  ephase : {args.ephase}")
+    else:
+        print(f"  ebin   : {args.ebin}")
+    if len(args.fits_files) > 1 and args.output:
+        print("  Warning: --output is ignored when multiple input files are provided.")
+    else:
+        print(f"  Output : {args.output or '<auto>'}")
     print()
 
-    result = beq(args.fits_file, sbin=args.sbin, ebin=args.ebin, outfile=args.output)
+    for f in args.fits_files:
+        print(f"Processing: {f}")
+        outfile = args.output if len(args.fits_files) == 1 else None
+        result = beq(f, sbin=args.sbin, ebin=args.ebin, sphase=args.sphase, ephase=args.ephase, outfile=outfile)
 
-    if result:
-        print(f"\nDone. Output archive: {result}")
-    else:
-        print("No output produced (empty filename).")
-        sys.exit(1)
+        if result:
+            print(f"Done. Output archive: {result}\n")
+        else:
+            print(f"No output produced for {f}\n")
 
 
 if __name__ == "__main__":

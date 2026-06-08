@@ -5,6 +5,8 @@ A command-line tool for performing bandshape equalisation on pulsar FITS archive
 **Author:** Churchil Dwivedi, Avinash Kumar Paladi  
 **Email:** churchil.gw4@gmail.com, avinashkumarpaladi@gmail.com
 
+**Acknowledgments:** These codes were initially written by Churchil Dwivedi and later modified and expanded by Avinash Kumar Paladi.
+
 ---
 
 ## What it does
@@ -48,16 +50,18 @@ No additional installation step is needed — the script runs directly.
 ## Usage
 
 ```bash
-python3 bandshape_equalisation.py <FITS-file> [--sbin SBIN] [--ebin EBIN] [--output OUTPUT]
+python3 bandshape_equalisation.py <FITS-files>... [--sbin SBIN] [--ebin EBIN] [--sphase SPHASE] [--ephase EPHASE] [--output OUTPUT]
 ```
 
 ### Arguments
 
 | Argument | Type | Description |
 |---|---|---|
-| `FITS-file` | positional (required) | Input PSRCHIVE FITS archive |
+| `FITS-files` | positional (required) | Input PSRCHIVE FITS archive(s) |
 | `--sbin SBIN` | optional int | Start phase bin of the off-pulse window (default: `0`) |
 | `--ebin EBIN` | optional int | End phase bin of the off-pulse window (default: `nbin`) |
+| `--sphase SPHASE` | optional float | Start phase of the off-pulse window (0.0 to 1.0, overrides `--sbin`) |
+| `--ephase EPHASE` | optional float | End phase of the off-pulse window (0.0 to 1.0, overrides `--ebin`) |
 | `--output OUTPUT` | optional str | Output filename (default: `<input>.beq.fits`) |
 
 ### Get help
@@ -76,9 +80,14 @@ python3 bandshape_equalisation.py J0437+4715_Band3.fits
 # Output: J0437+4715_Band3.beq.fits
 ```
 
-**Specify off-pulse phase bins:**
+**Process multiple files and specify off-pulse phase bins:**
 ```bash
-python3 bandshape_equalisation.py J0437+4715_Band3.fits --sbin 100 --ebin 200
+python3 bandshape_equalisation.py *.fits --sbin 100 --ebin 200
+```
+
+**Process multiple files using phase ranges (0.0 to 1.0) instead of bins:**
+```bash
+python3 bandshape_equalisation.py *.fits --sphase 0.25 --ephase 0.40
 ```
 
 **Full control — specify all arguments:**
